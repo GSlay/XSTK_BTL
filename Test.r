@@ -9,11 +9,11 @@ str(data)
 
 # Loại bỏ ký tự thừa trong các cột
 data$Release_Price <- gsub("\\$", "", data$Release_Price)
-data$Core_Speed <- gsub("\\MHz", "", data$Core_Speed)
-data$Memory <- gsub("\\MB", "", data$Memory)
-data$Memory_Bandwidth <- gsub("\\GB/sec", "", data$Memory_Bandwidth)
-data$Memory_Speed <- gsub("\\MHz", "", data$Memory_Speed)
-data$Max_Power <- gsub("\\Watts", "", data$Max_Power)
+data$Core_Speed <- gsub(" MHz", "", data$Core_Speed)
+data$Memory <- gsub(" MB", "", data$Memory)
+data$Memory_Bandwidth <- gsub("GB/sec", "", data$Memory_Bandwidth)
+data$Memory_Speed <- gsub(" MHz", "", data$Memory_Speed)
+data$Max_Power <- gsub(" Watts", "", data$Max_Power)
 
 print("# Chuyển các cột thành dạng numeric")
 data$Release_Price <- as.numeric(data$Release_Price)
@@ -26,7 +26,7 @@ data$Max_Power <- as.numeric(data$Max_Power)
 # Nhập dữ liệu cột Best_Resolution để tính number_of_pixels
 GPU_data$Best_Resolution <- as.character(GPU_data$Best_Resolution)
 
-# Tách cột độ phân giải thành hai phần: width và height
+# Tách cột độ phân giải thành hai phần: width và heights
 GPU_data$res_split <- strsplit(GPU_data$Best_Resolution, " x ")
 GPU_data$width <- sapply(GPU_data$res_split, function(x) as.numeric(x[1]))
 GPU_data$height <- sapply(GPU_data$res_split, function(x) as.numeric(x[2]))
@@ -41,16 +41,20 @@ library(inspectdf)
 print(inspect_na(data))
 str(data)
 
-print("# Loại bỏ các hàng có giá trị thiếu")
-data <- na.omit(data)
+# Áp dụng cho tất cả các cột số trong dataframe
+numeric_columns <- sapply(data, is.numeric)
+
+# Thay thế NA bằng giá trị trung bình của từng cột
+data[numeric_columns] <- lapply(data[numeric_columns], function(col) {
+  col[is.na(col)] <- mean(col, na.rm = TRUE)
+  return(col)
+})
+
+print("# Thay thế dữ liệu khuyết bằng giá trị trung bình")
 str(data)
 
 # Xây dựng mô hình hồi quy tuyến tính
-model <- lm(Release_Price ~ number_of_pixels + Core_Speed + Memory + 
-            Memory_Bandwidth + Memory_Speed + Manufacturer + Max_Power, 
-            data = data)
-
-print(1)
+model <- lm(Release_Price ~ ., data)
 
 # Tóm tắt kết quả mô hình
 summary(model)
@@ -78,7 +82,7 @@ library(lmtest)
 dwtest(model)
 
 # Dự đoán với dữ liệu mới
-new_data <- data.frame(
+data <- data.frame(
   number_of_pixels = c(1000, 1200),
   core_speed_value = c(1.5, 1.7),
   memory_value = c(8, 16),
@@ -88,5 +92,6 @@ new_data <- data.frame(
   max_power_value = c(120, 150)
 )
 
-predictions <- predict(model, newdata = new_data)
+predictions <- predict(model, newdata = data)
+print(1)
 print(predictions)
