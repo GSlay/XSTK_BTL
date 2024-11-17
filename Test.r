@@ -14,8 +14,8 @@ data <- na.omit(data)
 # Hoặc thay thế giá trị thiếu bằng trung bình (nếu cần)
 # data$number_of_pixels[is.na(data$number_of_pixels)] <- mean(data$number_of_pixels, na.rm = TRUE)
 
-# Chuyển manufacturer thành dạng factor
-data$manufacturer <- as.factor(data$manufacturer)
+# Chuyển Manufacturer thành dạng factor
+data$Manufacturer <- as.factor(data$Manufacturer)
 
 # Xây dựng mô hình hồi quy tuyến tính
 model <- lm(release_price ~ number_of_pixels + core_speed_value + memory_value + 
