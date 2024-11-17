@@ -17,9 +17,20 @@ data <- na.omit(data)
 # Chuyển Manufacturer thành dạng factor
 data$Manufacturer <- as.factor(data$Manufacturer)
 
+# Giả sử cột Best_resolution là dạng chuỗi
+data$Best_resolution <- as.character(data$Best_resolution)
+
+# Tách cột độ phân giải thành hai phần: width và height
+data$res_split <- strsplit(data$Best_resolution, "x")
+data$width <- sapply(data$res_split, function(x) as.numeric(x[1]))
+data$height <- sapply(data$res_split, function(x) as.numeric(x[2]))
+
+# Tính tổng số pixel
+data$number_of_pixels <- data$width * data$height
+
 # Xây dựng mô hình hồi quy tuyến tính
-model <- lm(release_price ~ number_of_pixels + core_speed_value + memory_value + 
-            memory_bandwidth_value + memory_speed_value + manufacturer + max_power_value, 
+model <- lm(Release_Price ~ number_of_pixels + Core_Speed + Memory + 
+            Memory_Bandwidth + Memory_Speed + Manufacturer + Max_Power, 
             data = data)
 
 # Tóm tắt kết quả mô hình
