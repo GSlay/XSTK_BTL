@@ -12,7 +12,7 @@ sum(is.na(data))
 data <- na.omit(data)
 
 # Hoặc thay thế giá trị thiếu bằng trung bình (nếu cần)
-data$number_of_pixels[is.na(data$number_of_pixels)] <- mean(data$number_of_pixels, na.rm = TRUE)
+# data$number_of_pixels[is.na(data$number_of_pixels)] <- mean(data$number_of_pixels, na.rm = TRUE)
 
 # Chuyển manufacturer thành dạng factor
 data$manufacturer <- as.factor(data$manufacturer)
