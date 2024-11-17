@@ -1,5 +1,5 @@
 # Đọc dữ liệu
-data <- read.csv("data.csv")
+data <- read.csv("ALL_GPUs.csv")
 
 # Xem tổng quan dữ liệu
 str(data)
