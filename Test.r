@@ -5,6 +5,7 @@ GPU_data <- read.csv("All_GPUs.csv")
 library("dplyr")
 data <- GPU_data %>% select("Release_Price", "Core_Speed", "Manufacturer", "Memory", "Memory_Bandwidth", "Memory_Speed", "Max_Power")
 str(data)
+cat("—-----------------------------------------------\n")
 
 # Loại bỏ ký tự thừa trong các cột
 data$Release_Price <- gsub("\\$", "", data$Release_Price)
@@ -35,9 +36,11 @@ data$number_of_pixels <- GPU_data$width * GPU_data$height
 # Chuyển Manufacturer thành dạng factor
 data$Manufacturer <- as.factor(data$Manufacturer)
 
-cat("\n\n-- Kiểm tra số lượng và tỷ lệ dữ liệu khuyết --")
+# Kiểm tra số lượng và tỷ lệ dữ liệu khuyết
+cat("\n\n-- Kiểm tra số lượng và tỷ lệ dữ liệu khuyết --\n")
 library(inspectdf)
 print(inspect_na(data))
+cat("—-----------------------------------------------\n")
 
 # Thay thế NA bằng giá trị trung bình của từng cột
 numeric_columns <- sapply(data, is.numeric)
@@ -47,8 +50,35 @@ data[numeric_columns] <- lapply(data[numeric_columns], function(col) {
 })
 
 # Xây dựng mô hình hồi quy tuyến tính
-model <- lm(Release_Price ~ ., data)
+model <- lm(Release_Price ~ . - number_of_pixels, data)
 
 # Tóm tắt kết quả mô hình
 cat("\n\n-- Tóm tắt kết quả mô hình --")
 print(summary(model))
+cat("—-----------------------------------------------\n")
+
+library(car)
+print(vif(model))
+
+
+# Kiểm tra các giả định
+pdf("diagnostic_plots.pdf")
+
+plot(model)
+
+dev.off()
+
+log_model <- lm(log(Release_Price) ~ ., data)
+
+cat("\n\n-- Tóm tắt kết quả mô hình log --")
+print(summary(log_model))
+cat("—-----------------------------------------------\n")
+
+# Kiểm tra các giả định
+pdf("log_diagnostic_plots.pdf")
+
+plot(log_model)
+
+dev.off()
+
+
