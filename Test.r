@@ -7,7 +7,7 @@ data <- GPU_data %>% select("Release_Price", "Core_Speed", "Manufacturer", "Memo
 str(data)
 
 # Loại bỏ ký tự thừa trong các cột
-data$Release_Price <- gsub("P\\$", "", data$Release_Price)
+data$Release_Price <- gsub("\\$", "", data$Release_Price)
 data$Core_Speed <- gsub(" MHz", "", data$Core_Speed)
 data$Memory <- gsub(" MB", "", data$Memory)
 data$Memory_Bandwidth <- gsub("GB/sec", "", data$Memory_Bandwidth)
