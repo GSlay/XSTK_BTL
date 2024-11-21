@@ -50,35 +50,29 @@ data[numeric_columns] <- lapply(data[numeric_columns], function(col) {
 })
 
 # Xây dựng mô hình hồi quy tuyến tính
-model <- lm(Release_Price ~ . - number_of_pixels, data)
+model <- lm(Release_Price ~ ., data)
 
-# Tóm tắt kết quả mô hình
-cat("\n\n-- Tóm tắt kết quả mô hình --")
-print(summary(model))
-cat("—-----------------------------------------------\n")
-
+# Kiểm tra các giả định mô hình
+cat("\n\n-- Kiểm định mô hình --\n")
 library(car)
 print(vif(model))
-
-
-# Kiểm tra các giả định
 pdf("diagnostic_plots.pdf")
-
 plot(model)
-
 dev.off()
+cat("—-----------------------------------------------\n")
 
+# Xây dựng mô hình log
 log_model <- lm(log(Release_Price) ~ ., data)
 
+
+# Kiểm tra các giả định mô hình log 
+cat("\n\n-- Kiểm định mô hình log --\n")
+pdf("log_diagnostic_plots.pdf")
+plot(log_model)
+dev.off()
+cat("—-----------------------------------------------\n")
+
+# In kết quả tóm tắt mô hình
 cat("\n\n-- Tóm tắt kết quả mô hình log --")
 print(summary(log_model))
 cat("—-----------------------------------------------\n")
-
-# Kiểm tra các giả định
-pdf("log_diagnostic_plots.pdf")
-
-plot(log_model)
-
-dev.off()
-
-
